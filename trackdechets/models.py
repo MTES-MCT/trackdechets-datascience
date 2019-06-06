@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import grequests
 import requests
 from peewee import *
 import camelot
-import pandas as pd
 
 from .config import POSTGRES_DB, POSTGRES_HOST, POSTGRES_HOST, POSTGRES_USER, \
     POSTGRES_PWD, POSTGRES_PORT, SIV_CENTRES_VHU_FILE_PATH
-from .utils import parse_icpe_fiche_detail
+from .scrapers import RUBRIQUE, ALINEA, DATE_AUTORISATION, ETAT_ACTIVITE, \
+    REGIME_AUTORISE, ACTIVITE, VOLUME, UNITE
 
 
 db = PostgresqlDatabase(
@@ -40,12 +39,6 @@ class VHU(BaseModel):
     date_fin_validite = DateTimeField()
 
     @classmethod
-    def bulk_create(cls, data):
-        """ Insert VHU data in bulk """
-        with db.atomic():
-            cls.insert_many(data).execute()
-
-    @classmethod
     def create_from_siv_pdf(cls, pages='all'):
         """
         create VHU records from the pdf published by the SIV at
@@ -73,7 +66,7 @@ class VHU(BaseModel):
             df[cls.date_fin_validite.column_name],
             format=date_format)
         vhus = df.to_dict(orient='records')
-        cls.bulk_create(vhus)
+        cls.insert_many(vhus)
 
 
 class ICPE(BaseModel):
@@ -116,67 +109,29 @@ class Rubrique(BaseModel):
     unite = CharField()
 
     @classmethod
-    def bulk_create(cls, data):
-        """ Insert Rubrique data in bulk """
-        with db.atomic():
-            cls.insert_many(data).execute()
+    def from_rubrique_scraped(cls, icpe_id, rubrique):
+        """
+        return an instance of Rubrique from a dict
+        parsed by the scraper
+        """
+        data = {
+            cls.icpe_id.column.name: icpe_id,
+            cls.rubrique.column.name: rubrique[RUBRIQUE],
+            cls.alinea.column.name: rubrique[ALINEA],
+            cls.date_autorisation.column.name: rubrique[DATE_AUTORISATION],
+            cls.etat_activite.column.name: rubrique[ETAT_ACTIVITE],
+            cls.regime_autorise.column.name: rubrique[REGIME_AUTORISE],
+            cls.activite.column.name: rubrique[ACTIVITE],
+            cls.volume.column.name: rubrique[VOLUME],
+            cls.unite.column.name: rubrique[UNITE]
+        }
 
-    @classmethod
-    def create_from_icpe_table_async(cls):
-        """ extract rubrique information from the ICPE's fiche url """
-        query = ICPE.select()
-        urls = [icpe.url_fiche for icpe in query]
-        icpe_ids = [icpe.id for icpe in query]
-        requests = (grequests.get(u) for u in urls)
-        responses = grequests.map(requests)
-        htmls = [
-            (icpe_id, response.text) for
-            (icpe_id, response) in
-            list(zip(icpe_ids, responses))]
+        return cls(**data)
 
-        data = [
-            (icpe_id, parse_icpe_fiche_detail(html)) for
-            (icpe_id, html)
-            in htmls]
 
-        flatlist = []
 
-        for (icpe_id, rubriques) in data:
-            for rubrique in rubriques:
-                flatlist.append((icpe_id, rubrique))
+class ICPE_27_35(ICPE):
+    """ ICPE table filtered for """
+    pass
 
-        rubriques = [{
-            cls.icpe_id.column: icpe_id,
-            cls.rubrique.column: rubrique['Rubri. IC'],
-            cls.alinea.column: rubrique['Ali.'],
-            cls.date_autorisation.column: rubrique['Date auto.'],
-            cls.etat_activite.column: rubrique['Etat d\'activité'],
-            cls.regime_autorise.column: rubrique['Régime autorisé(3)'],
-            cls.activite.column: rubrique['Activité'],
-            cls.volume.column: rubrique['Volume'],
-            cls.unite.column: rubrique['Unité']
-        } for (icpe_id, rubrique) in flatlist]
 
-        cls.bulk_create(rubriques)
-
-    @classmethod
-    def create_from_icpe_table(cls):
-        query = ICPE.select()
-        rubriques = []
-        for icpe in query:
-            response = requests.get(icpe.url_fiche)
-            html = response.text
-            parsed = parse_icpe_fiche_detail(html)
-            for r in parsed:
-                rubrique = {
-                    cls.icpe_id.column_name: icpe.id,
-                    cls.rubrique.column_name: r['Rubri. IC'],
-                    cls.alinea.column_name: r['Ali.'],
-                    cls.date_autorisation.column_name: r['Date auto.'],
-                    cls.etat_activite.column_name: r['Etat d\'activité'],
-                    cls.regime_autorise.column_name: r['Régime autorisé(3)'],
-                    cls.activite.column_name: r['Activité'],
-                    cls.volume.column_name: r['Volume'],
-                    cls.unite.column_name: r['Unité']
-                }
-                cls.create(**rubrique)
