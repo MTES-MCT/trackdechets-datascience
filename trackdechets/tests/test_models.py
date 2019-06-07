@@ -40,3 +40,4 @@ class VHUTestCase(BaseTestCase):
         VHU.create_from_siv_pdf(pages='1')
         count = VHU.select().count()
         self.assertEqual(count, 73)
+

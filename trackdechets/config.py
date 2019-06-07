@@ -18,3 +18,9 @@ POSTGRES_PORT = os.environ['POSTGRES_PORT']
 # VHU CONFIGURATION
 
 SIV_CENTRES_VHU_FILE_PATH = './data/VHU/Centres_VHU_20190517.pdf'
+
+
+# IREP CONFIGURATION
+
+IREP_DOWNLOAD_URL = 'http://www.georisques.gouv.fr/irep/data/2017'
+IREP_ETABLISSEMENTS_FILENAME = 'etablissements.csv'

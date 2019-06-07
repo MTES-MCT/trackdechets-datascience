@@ -13,7 +13,7 @@ class RecipesTestCase(TestCase):
                               mock_Rubrique, mock_ICPE):
 
         mock_icpe = mock.Mock()
-        mock_icpe.id = 1
+        mock_icpe.code_s3ic = 's3ic'
         mock_icpe.url_fiche = 'url'
 
         mock_ICPE.select.return_value = [mock_icpe]
@@ -23,11 +23,6 @@ class RecipesTestCase(TestCase):
         mock_scraper.rubriques = ['2765', '3567']
 
         create_rubriques()
-
-        args_list = mock_Rubrique.from_rubrique_scraped.call_args_list
-        expected = [mock.call('2765', 'url'), mock.call('3567', 'url')]
-
-        mock_Rubrique.bulk_create.assert_called_once()
 
     def test_create_rubriques_real(self):
         from ..models import db, Rubrique

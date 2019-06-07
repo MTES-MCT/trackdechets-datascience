@@ -98,7 +98,7 @@ class ICPE(BaseModel):
 
 class Rubrique(BaseModel):
 
-    icpe_id = ForeignKeyField(ICPE, backref='rubriques')
+    code_s3ic = CharField(max_length=10, null=True)
     rubrique = CharField()
     alinea = CharField()
     date_autorisation = CharField()
@@ -109,13 +109,13 @@ class Rubrique(BaseModel):
     unite = CharField()
 
     @classmethod
-    def from_rubrique_scraped(cls, icpe_id, rubrique):
+    def from_rubrique_scraped(cls, code_s3ic, rubrique):
         """
         return an instance of Rubrique from a dict
         parsed by the scraper
         """
         data = {
-            cls.icpe_id.column.name: icpe_id,
+            cls.code_s3ic.column.name: code_s3ic,
             cls.rubrique.column.name: rubrique[RUBRIQUE],
             cls.alinea.column.name: rubrique[ALINEA],
             cls.date_autorisation.column.name: rubrique[DATE_AUTORISATION],
@@ -128,6 +128,23 @@ class Rubrique(BaseModel):
 
         return cls(**data)
 
+
+class IREP(BaseModel):
+
+    identifiant = CharField()
+    nom_etablissement = TextField()
+    numero_siret = CharField()
+    adresse = TextField()
+    code_postal = CharField()
+    commune = CharField()
+    departement = CharField()
+    region = CharField()
+    coordonnees_X = FloatField()
+    coordonnees_Y = FloatField()
+    code_ape = CharField()
+    libelle_ape = CharField()
+    code_eprtr = CharField()
+    libelle_eprtr = TextField()
 
 
 class ICPE_27_35(ICPE):
