@@ -7,7 +7,12 @@ import tempfile
 import zipfile
 import shutil
 
+import xlrd
+
 from .config import IREP_DOWNLOAD_URL, IREP_ETABLISSEMENTS_FILENAME
+from .config import GEREP_FILE_PATH, GEREP_PRODUCTEURS_SHEET, \
+    GEREP_TRAITEURS_SHEET
+from .utils import spreadsheet2array
 
 
 def get_irep_data():
@@ -22,3 +27,14 @@ def get_irep_data():
                 csv_file,
                 delimiter=',')
             return list(reader)
+
+
+def get_gerep_data():
+    """ Retrieves GEREP data from Excel file """
+    with xlrd.open_workbook(GEREP_FILE_PATH) as wb:
+        producteurs_sh = wb.sheet_by_name(GEREP_PRODUCTEURS_SHEET)
+        traiteurs_sh = wb.sheet_by_name(GEREP_TRAITEURS_SHEET)
+        offset = 3
+        producteurs = spreadsheet2array(producteurs_sh, offset)
+        traiteurs = spreadsheet2array(traiteurs_sh, offset)
+        return (producteurs, traiteurs)

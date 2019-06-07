@@ -2,7 +2,7 @@
 import os
 from unittest import TestCase, mock
 
-from ..connectors import get_irep_data
+from ..connectors import get_irep_data, get_gerep_data
 
 
 class ConnectorsTestCase(TestCase):
@@ -18,3 +18,9 @@ class ConnectorsTestCase(TestCase):
         mock_requests.get.return_value = mock_response
         data = get_irep_data()
         self.assertEqual(len(data), 9)
+
+    def test_get_gerep_data(self):
+        """ it should retrieves GEREP data from Excel file """
+        (producteurs, traiteurs) = get_gerep_data()
+        self.assertEqual(len(producteurs), 8)
+        self.assertEqual(len(traiteurs), 10)

@@ -24,3 +24,10 @@ SIV_CENTRES_VHU_FILE_PATH = './data/VHU/Centres_VHU_20190517.pdf'
 
 IREP_DOWNLOAD_URL = 'http://www.georisques.gouv.fr/irep/data/2017'
 IREP_ETABLISSEMENTS_FILENAME = 'etablissements.csv'
+
+
+# GEREP CONFIGURATION
+
+GEREP_FILE_PATH = './data/GEREP/GEREP-2016-2017.xlsx'
+GEREP_PRODUCTEURS_SHEET = 'Etablissements producteurs'
+GEREP_TRAITEURS_SHEET = 'Etablissements traiteurs'

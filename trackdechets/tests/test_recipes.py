@@ -1,7 +1,8 @@
 
 from unittest import TestCase, mock
 
-from ..recipes import create_rubriques
+from ..recipes import create_rubriques, filter_icpe_27xx_35xx, \
+    prepare_irep, join_icpe_irep, prepare_gerep
 
 
 class RecipesTestCase(TestCase):
@@ -29,3 +30,25 @@ class RecipesTestCase(TestCase):
         db.connect()
         db.create_tables([Rubrique])
         create_rubriques()
+
+    def test_filter_icpe_27xx_35xx(self):
+        filter_icpe_27xx_35xx()
+
+    def test_prepare_irep(self):
+        from ..models import db, IREP_Prepared
+        db.connect()
+        db.create_tables([IREP_Prepared])
+        prepare_irep()
+
+    def test_join_icpe_irep(self):
+        from ..models import db, ICPE_join_IREP
+        db.connect()
+        db.create_tables([ICPE_join_IREP])
+        join_icpe_irep()
+
+    def test_prepare_gerep(self):
+        from ..models import db, GEREP_prepared
+        db.connect()
+        db.create_tables([GEREP_prepared])
+        prepare_gerep()
+

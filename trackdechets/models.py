@@ -147,8 +147,73 @@ class IREP(BaseModel):
     libelle_eprtr = TextField()
 
 
+class IREP_Prepared(IREP):
+
+    code_s3ic = CharField()
+
+
+class GEREP(BaseModel):
+
+    annee = IntegerField(null=True)
+    code_etablissement = CharField(null=True)
+    nom_etablissement = CharField(null=True)
+    type_etablissement = CharField(null=True)
+    adresse_site_exploitation = TextField(null=True)
+    code_postal_etablissement = CharField(null=True)
+    commune = CharField(null=True)
+    code_insee = CharField(null=True)
+    numero_siret = CharField(null=True)
+    code_ape = CharField(null=True)
+    nom_contact = CharField(null=True)
+    tel_contact = CharField(null=True)
+    fonction_contact = TextField(null=True)
+    mail_contact = CharField(null=True)
+    code_dechet = CharField(null=True)
+    dechet = TextField(null=True)
+
+
+class GEREP_prepared(GEREP):
+
+    code_s3ic = CharField()
+
+
 class ICPE_27_35(ICPE):
-    """ ICPE table filtered for """
-    pass
+    """ ICPE table filtered for on icpe rubriques 27xx and 35xx """
 
 
+class ICPE_join_IREP(ICPE):
+
+    irep_nom_etablissement = TextField(null=True)
+    irep_numero_siret = CharField(null=True)
+    irep_adresse = TextField(null=True)
+    irep_code_postal = CharField(null=True)
+    irep_commune = CharField(null=True)
+    irep_departement = CharField(null=True)
+    irep_region = CharField(null=True)
+    irep_coordonnees_X = FloatField(null=True)
+    irep_coordonnees_Y = FloatField(null=True)
+    irep_code_ape = CharField(null=True)
+    irep_libelle_ape = CharField(null=True)
+    irep_code_eprtr = CharField(null=True)
+    irep_libelle_eprtr = TextField(null=True)
+
+
+
+class ICPE_join_GEREP(ICPE):
+
+    gerep_annee = IntegerField(null=True)
+    gerep_code_etablissement = CharField(null=True)
+    gerep_nom_etablissement = CharField(null=True)
+    gerep_type_etablissement = CharField(null=True)
+    gerep_adresse_site_exploitation = TextField(null=True)
+    gerep_code_postal_etablissement = CharField(null=True)
+    commune = CharField(null=True)
+    code_insee = CharField(null=True)
+    numero_siret = CharField(null=True)
+    code_ape = CharField(null=True)
+    nom_contact = CharField(null=True)
+    tel_contact = CharField(null=True)
+    fonction_contact = TextField(null=True)
+    mail_contact = CharField(null=True)
+    code_dechet = CharField(null=True)
+    dechet = TextField(null=True)

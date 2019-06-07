@@ -1,5 +1,5 @@
 
-from .models import IREP
+from .models import IREP, GEREP
 
 
 class BaseSerializer():
@@ -40,5 +40,42 @@ class IREPSerializer(BaseSerializer):
         self.instance = IREP(**irep)
 
 
+class GEREPSerializer(BaseSerializer):
 
+    def __init__(self, data, etablissement_type):
+        self.data = data
+        self.etablissement_type = etablissement_type
+        self.instance = None
 
+    def to_internal_value(self):
+
+        gerep = {
+            GEREP.type_etablissement.column_name: self.etablissement_type,
+            GEREP.annee.column_name: self.data['Annee'],
+            GEREP.code_etablissement.column_name:
+                self.data['Code établissement'],
+            GEREP.nom_etablissement.column_name:
+                self.data['Nom Etablissement'],
+            GEREP.adresse_site_exploitation.column_name:
+                self.data['Adresse Site Exploitation'],
+            GEREP.code_insee.column_name: self.data['Code Insee'],
+            GEREP.code_ape.column_name: self.data['Code APE'],
+            GEREP.numero_siret.column_name: self.data['Numero Siret'],
+            GEREP.nom_contact.column_name: self.data['Nom Contact'],
+            GEREP.fonction_contact.column_name: self.data['Fonction Contact'],
+            GEREP.tel_contact.column_name: self.data['Tel Contact'],
+            GEREP.mail_contact.column_name: self.data['Mail Contact']
+        }
+
+        if self.etablissement_type == 'producteur':
+            gerep[GEREP.code_dechet.column_name] = \
+                self.data['Code déchet produit']
+            gerep[GEREP.dechet.column_name] = \
+                self.data['Déchet produit']
+
+        elif self.etablissement_type == 'traiteur':
+            gerep[GEREP.code_dechet.column_name] = \
+                self.data['Code déchet traité']
+            gerep[GEREP.dechet.column_name] = self.data['Déchet traité']
+
+        self.instance = GEREP(**gerep)

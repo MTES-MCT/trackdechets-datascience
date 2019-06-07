@@ -1,7 +1,7 @@
 
 from unittest import TestCase
 
-from ..serializers import IREPSerializer
+from ..serializers import IREPSerializer, GEREPSerializer
 
 
 class IREPSerializerTestCase(TestCase):
@@ -26,5 +26,55 @@ class IREPSerializerTestCase(TestCase):
              ('libelle_eprtr', '')])
 
         serializer = IREPSerializer(data)
+        serializer.to_internal_value()
+        self.assertIsNotNone(serializer.instance)
+
+
+class GEREPSerializerTestCase(TestCase):
+
+    def test_to_internal_value_traiteur(self):
+        """ it should convert dict to model instance """
+        data = {
+            'Annee': 2016.0,
+            'Code établissement': '029.16724',
+            'Nom Etablissement': 'ACME',
+            'Adresse Site Exploitation': 'adresse',
+            'Code Postal Etablissement': '29700',
+            'Commune': 'Pluguffan',
+            'Code Insee': '29216',
+            'Numero Siret': 'siret',
+            'Code APE': '38.11Z',
+            'Nom Contact': 'Mr le Président',
+            'Tel Contact': 'telephone',
+            'Fonction Contact': 'contrôleur de gestion',
+            'Mail Contact': 'president@acme.fr',
+            'Code déchet traité': '17 02 03',
+            'Déchet traité': 'matières plastiques'}
+
+        serializer = GEREPSerializer(data, 'traiteur')
+        serializer.to_internal_value()
+        self.assertIsNotNone(serializer.instance)
+
+    def test_to_internal_value_producteur(self):
+        """ it should convert dict to model instance """
+
+        data = {
+            'Annee': 2016.0,
+            'Code établissement': '029.16724',
+            'Nom Etablissement': 'ACME',
+            'Adresse Site Exploitation': 'adresse',
+            'Code Postal Etablissement': '29700',
+            'Commune': 'Pluguffan',
+            'Code Insee': '29216',
+            'Numero Siret': 'siret',
+            'Code APE': '38.11Z',
+            'Nom Contact': 'Mr le Président',
+            'Tel Contact': 'telephone',
+            'Fonction Contact': 'contrôleur de gestion',
+            'Mail Contact': 'president@acme.fr',
+            'Code déchet produit': '17 02 03',
+            'Déchet produit': 'matières plastiques'}
+
+        serializer = GEREPSerializer(data, 'producteur')
         serializer.to_internal_value()
         self.assertIsNotNone(serializer.instance)
