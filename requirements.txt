@@ -1,8 +1,10 @@
 camelot-py==0.7.2
 ipython-sql==0.3.9
 jupyter==1.0.0
-peewee==3.9.5
+peewee==3.18.3
 pandas==0.24.2
 psycopg2==2.8.2
 requests==2.22.0
 xlrd==1.2.0
+sqlparse>=0.5.4 # not directly required, pinned by Snyk to avoid a vulnerability
+urllib3>=2.6.0 # not directly required, pinned by Snyk to avoid a vulnerability
