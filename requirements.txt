@@ -6,3 +6,4 @@ pandas==0.24.2
 psycopg2==2.8.2
 requests==2.22.0
 xlrd==1.2.0
+cryptography>=46.0.5 # not directly required, pinned by Snyk to avoid a vulnerability
